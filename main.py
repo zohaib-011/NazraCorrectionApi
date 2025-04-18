@@ -5,7 +5,8 @@ import difflib
 import os
 
 app = FastAPI()
-model = whisper.load_model("base")  # Use "tiny" if low memory
+# model = whisper.load_model("base")  # Use "tiny" if low memory
+model = whisper.load_model("tiny")  # Change from "base" to "tiny"
 
 # Dummy ayah (Surah Baqarah 2:285) — for test purposes
 ayah_285 = "آمَنَ الرَّسُولُ بِمَا أُنزِلَ إِلَيْهِ مِن رَّبِّهِ وَالْمُؤْمِنُونَ..."
