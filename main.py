@@ -13,19 +13,27 @@ ayah_285 = "آمَنَ الرَّسُولُ بِمَا أُنزِلَ إِلَي
 
 @app.post("/quran-correct")
 async def quran_correct(file: UploadFile, ayah: str = Form(...)):
-    audio_path = f"temp_{file.filename}"
-    with open(audio_path, "wb") as f:
-        f.write(await file.read())
+    try:
+        print(f"Received file: {file.filename}")
+        print(f"Ayah: {ayah}")
 
-    result = model.transcribe(audio_path, language="ar")
-    os.remove(audio_path)  # Cleanup
+        audio_path = f"temp_{file.filename}"
+        with open(audio_path, "wb") as f:
+            f.write(await file.read())
 
-    user_text = result["text"]
-    diff = difflib.ndiff(ayah, user_text)
-    feedback = "\n".join(diff)
+        print(f"File saved to: {audio_path}")
 
-    return JSONResponse(content={
-        "original_ayah": ayah,
-        "user_text": user_text,
-        "feedback": feedback
-    })
+        result = model.transcribe(audio_path, language="ar")
+        os.remove(audio_path)
+
+        user_text = result["text"]
+        feedback = "\n".join(difflib.ndiff(ayah, user_text))
+
+        return JSONResponse(content={
+            "original_ayah": ayah,
+            "user_text": user_text,
+            "feedback": feedback
+        })
+    
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
